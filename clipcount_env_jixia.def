@@ -1,0 +1,44 @@
+# Bootstrap using a local image
+Bootstrap: localimage
+From: /scratch/pytorch_21.10-py3.sif
+
+%files
+# Copy requirements.txt from the local directory to /build/requirements.txt in the container
+/home/wenzhe/Experiments/heu/CLIP-Count/requirements.txt /build/requirements.txt
+
+%post
+# Update package manager and install gpustat
+cat << EOF | tee /etc/apt/sources.list
+deb https://mirrors.ustc.edu.cn/ubuntu/ jammy main restricted universe multiverse
+deb-src https://mirrors.ustc.edu.cn/ubuntu/ jammy main restricted universe multiverse
+deb https://mirrors.ustc.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse
+deb-src https://mirrors.ustc.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse
+deb https://mirrors.ustc.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse
+deb-src https://mirrors.ustc.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse
+deb https://mirrors.ustc.edu.cn/ubuntu/ jammy-security main restricted universe multiverse
+deb-src https://mirrors.ustc.edu.cn/ubuntu/ jammy-security main restricted universe multiverse
+deb https://mirrors.ustc.edu.cn/ubuntu/ jammy-proposed main restricted universe multiverse
+deb-src https://mirrors.ustc.edu.cn/ubuntu/ jammy-proposed main restricted universe multiverse
+EOF
+apt update
+apt install gpustat -y
+
+# Install necessary Python packages
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+pip install --upgrade pip
+pip uninstall opencv-python
+pip install gpustat
+pip install knockknock
+pip install clearml
+pip install -r /build/requirements.txt
+
+# Install necessary Python packages
+pip install ftfy regex tqdm
+pip install 'httpx[socks]'
+
+apt-get install -y libsm6 libxext6 libxrender-dev
+apt install -y libgl1-mesa-glx 
+
+export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+pip install git+https://github.com/openai/CLIP.git
+

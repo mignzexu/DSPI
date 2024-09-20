@@ -1,0 +1,28 @@
+services:
+  clipcount_v2:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+    image: clipcount:v1
+    container_name: clipcount_v2
+    hostname: ${HOSTNAME}
+    privileged: true
+    ipc: host
+    network_mode: host
+    environment:
+      - HOST_USER=${USER}
+      - HOST_UID=${UID}
+      - DOCKER_CONTAINER=1
+      - TMPDIR=${TMPDIR}
+      - PATH=${DOCKER_PATH}
+    volumes:
+      - ./config:/config:rw
+      - /shares:/shares
+      - /scratch:/scratch
+      - ${HOME}:${HOME}
+    command: bash -c "bash /config/system_install.sh | tee /config/docker.log && bash /config/python_install.sh | tee -a /config/docker.log && echo 'Completed...' | tee -a /config/docker.log && tail -f /dev/null"

@@ -1,0 +1,21 @@
+services:
+  clipcount_v2:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+    image: clipcount:v2
+    container_name: clipcount_v2
+    hostname: ${HOSTNAME}
+    privileged: true
+    ipc: host
+    network_mode: host
+    volumes:
+      - /shares:/shares
+      - /scratch:/scratch
+      - ${HOME}:${HOME}
+    command: bash -c "service ssh restart && tail -f /dev/null"

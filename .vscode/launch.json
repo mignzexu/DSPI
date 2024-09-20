@@ -1,0 +1,132 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "gdino_dataloader",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "util/FSC147.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "gdino_extractor",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "scripts/gdino_prior_extractor.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "train",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "run.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0"
+            },
+            "args": [
+                "--mode",
+                "train",
+                "--data_path",
+                "${env:TMPDIR}/CLIP-Count_data",
+                "--exp_name",
+                "debug",
+                "--output_dir",
+                "out",
+                "--dataset_type",
+                "FSC_gdino",
+                "--epochs",
+                "2",
+                "--batch_size",
+                "2",
+                "--g_logits",
+                "g2i",
+                "--ma",
+                "--ada_ql",
+                "8",
+            ]
+        },
+        {
+            "name": "test",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "run.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0"
+            },
+            "args": [
+                "--mode",
+                "test",
+                "--data_path",
+                "${env:TMPDIR}/CLIP-Count_data",
+                "--exp_name",
+                "debug",
+                "--batch_size",
+                "1",
+                "--dataset_type",
+                "FSC_gdino",
+                // "--sh_dataset",
+                // "A",
+                "--ckpt",
+                "release/dspi_epoch=113-val_mae=13.10.ckpt",
+                "--g_logits",
+                "g2i",
+                "--ma",
+                "--ada_ql",
+                "16",
+                // "--online",
+                // "--log_test_img",
+                // "True",
+                // "--log_dir",
+                // "out/inf/abl/ma/ma_8_gd_g2i_ShanghaiTech_A",
+                // "--attn_map"
+            ],
+        },
+        {
+            "name": "attn",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "run.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0"
+            },
+            "args": [
+                "--mode",
+                "test",
+                "--data_path",
+                "${env:TMPDIR}/CLIP-Count_data",
+                "--exp_name",
+                "debug",
+                "--batch_size",
+                "1",
+                "--dataset_type",
+                "FSC_gdino",
+                "--sh_dataset",
+                "A",
+                "--ckpt",
+                "release/ma_epoch=194-val_mae=15.00.ckpt",
+                "--g_logits",
+                "None",
+                "--ma",
+                "--ada_ql",
+                "16",
+                // "--online",
+                "--log_test_img",
+                "True",
+                "--log_dir",
+                "out/debug",
+                "--attn_map"
+            ],
+        }
+    ]
+}
